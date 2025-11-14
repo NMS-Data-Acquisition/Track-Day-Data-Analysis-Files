@@ -1,0 +1,33 @@
+name: Upload all ZIP CSVs to Supabase
+
+on:
+  push:
+    paths:
+      - "Data-Files/**"
+
+jobs:
+  load_to_supabase:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install pandas psycopg2-binary
+
+      - name: Load all ZIPs into Supabase
+        env:
+          PGHOST: ${{ secrets.PGHOST }}
+          PGPORT: ${{ secrets.PGPORT }}
+          PGDATABASE: ${{ secrets.PGDATABASE }}
+          PGUSER: ${{ secrets.PGUSER }}
+          PGPASSWORD: ${{ secrets.PGPASSWORD }}
+        run: |
+          python scripts/load_all_zips.py
